@@ -21,6 +21,7 @@ import {
 	Bars3Icon,
 	XMarkIcon,
 	ArrowUpIcon,
+	ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
 import {
 	motion,
@@ -28,7 +29,7 @@ import {
 	useTransform,
 	AnimatePresence,
 } from 'framer-motion';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Animation variants
 const sectionVariants = {
@@ -107,68 +108,83 @@ function ParallaxBackground({
 
 	return (
 		<div className='fixed inset-0 z-[-10] overflow-hidden'>
-			{/* Main glow in top-left */}
+			{/* Main glow in top-left with enhanced radial gradient */}
 			<motion.div
 				className='absolute top-[-30vh] left-[-20vw] w-[150vw] h-[150vh]'
 				style={{
-					background: `radial-gradient(ellipse at center, ${primaryColor}${
-						isDarkTheme ? '14' : '10'
-					} 0%, transparent 60%)`,
+					background: `radial-gradient(circle at 30% 30%, ${primaryColor}${
+						isDarkTheme ? '18' : '12'
+					} 0%, ${primaryColor}${
+						isDarkTheme ? '0A' : '05'
+					} 45%, transparent 70%)`,
 					filter: 'blur(120px)',
 					y: y1,
 					opacity: opacity1.get() * opacityMultiplier,
 				}}
 			></motion.div>
 
-			{/* Secondary deep blue/purple glow bottom-right */}
+			{/* Secondary deep blue/purple glow bottom-right with mesh gradient */}
 			<motion.div
 				className='absolute bottom-[-80vh] right-[-50vw] w-[200vw] h-[200vh]'
 				style={{
 					background: isDarkTheme
-						? `radial-gradient(ellipse at center, rgba(25, 30, 60, 0.1) 0%, transparent 60%)`
-						: `radial-gradient(ellipse at center, rgba(80, 90, 120, 0.07) 0%, transparent 60%)`,
+						? `radial-gradient(circle at 70% 70%, rgba(35, 40, 70, 0.15) 0%, rgba(20, 25, 55, 0.1) 40%, transparent 70%)`
+						: `radial-gradient(circle at 70% 70%, rgba(90, 100, 130, 0.1) 0%, rgba(80, 90, 120, 0.07) 40%, transparent 70%)`,
 					filter: 'blur(150px)',
 					y: y2,
 					opacity: opacity2.get() * opacityMultiplier,
 				}}
 			></motion.div>
 
-			{/* Green accent middle-right */}
+			{/* Green accent middle-right with better mesh effect */}
 			<motion.div
 				className='absolute top-[30vh] right-[-30vw] w-[120vw] h-[120vh]'
 				style={{
-					background: `radial-gradient(circle, ${primaryColor}${
-						isDarkTheme ? '0A' : '08'
-					} 0%, transparent 55%)`,
+					background: `radial-gradient(ellipse at 70% 50%, ${primaryColor}${
+						isDarkTheme ? '12' : '0A'
+					} 0%, ${primaryColor}${
+						isDarkTheme ? '08' : '05'
+					} 35%, transparent 65%)`,
 					filter: 'blur(140px)',
 					y: y3,
 					opacity: opacity3.get() * opacityMultiplier,
 				}}
 			></motion.div>
 
-			{/* Dark/light gradient for contrast middle-left */}
+			{/* Dark/light gradient for contrast middle-left with more depth */}
 			<motion.div
 				className='absolute top-[60vh] left-[10vw] w-[100vw] h-[100vh]'
 				style={{
 					background: isDarkTheme
-						? `radial-gradient(circle, rgba(10, 15, 30, 0.2) 0%, transparent 50%)`
-						: `radial-gradient(circle, rgba(240, 242, 245, 0.6) 0%, transparent 50%)`,
+						? `radial-gradient(circle at 30% 50%, rgba(15, 20, 35, 0.25) 0%, rgba(10, 15, 25, 0.15) 30%, transparent 60%)`
+						: `radial-gradient(circle at 30% 50%, rgba(245, 247, 250, 0.7) 0%, rgba(240, 242, 245, 0.4) 30%, transparent 60%)`,
 					filter: 'blur(130px)',
 					y: y4,
 					opacity: opacity4.get() * opacityMultiplier,
 				}}
 			></motion.div>
 
-			{/* Grid overlay for tech feel */}
+			{/* New soft noise texture overlay for added depth */}
+			<div
+				className='absolute inset-0 opacity-[0.03] mix-blend-soft-light pointer-events-none'
+				style={{
+					backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+					backgroundSize: '200px 200px',
+				}}
+			/>
+
+			{/* Enhanced grid overlay for tech feel */}
 			<div
 				className='absolute inset-0'
 				style={{
-					opacity: isDarkTheme ? 0.03 : 0.02,
+					opacity: isDarkTheme ? 0.025 : 0.015,
 					backgroundImage: `
 						linear-gradient(${primaryColor} 1px, transparent 1px),
-						linear-gradient(90deg, ${primaryColor} 1px, transparent 1px)
+						linear-gradient(90deg, ${primaryColor} 1px, transparent 1px),
+						linear-gradient(rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
+						linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px)
 					`,
-					backgroundSize: '60px 60px',
+					backgroundSize: '100px 100px, 100px 100px, 20px 20px, 20px 20px',
 				}}
 			></div>
 		</div>
@@ -270,6 +286,47 @@ export default function Home() {
 		if (metaThemeColor) {
 			metaThemeColor.setAttribute('content', darkTheme.backgroundColor);
 		}
+
+		// Add Geist font
+		const addGeistFont = async () => {
+			const geistFont = new FontFace(
+				'Geist',
+				`url(https://fonts.vercel.com/geist-sans/Geist-Variable.woff2) format('woff2')`,
+				{
+					style: 'normal',
+					weight: '100 900',
+					display: 'swap',
+				}
+			);
+			const geistMonoFont = new FontFace(
+				'Geist Mono',
+				`url(https://fonts.vercel.com/geist-mono/GeistMono-Variable.woff2) format('woff2')`,
+				{
+					style: 'normal',
+					weight: '100 900',
+					display: 'swap',
+				}
+			);
+
+			try {
+				const loadedFont = await geistFont.load();
+				const loadedMonoFont = await geistMonoFont.load();
+				document.fonts.add(loadedFont);
+				document.fonts.add(loadedMonoFont);
+
+				// Apply font to body
+				document.body.style.fontFamily = 'Geist, system-ui, sans-serif';
+
+				// Apply better text rendering
+				document.body.style.textRendering = 'optimizeLegibility';
+				document.body.style.fontFeatureSettings =
+					'"ss01", "ss02", "cv01", "cv02"';
+			} catch (error) {
+				console.error('Failed to load Geist font:', error);
+			}
+		};
+
+		addGeistFont();
 	}, []);
 
 	// Existing form state
@@ -299,6 +356,21 @@ export default function Home() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	const navItems = ['info', 'proč', 'terminy', 'statistiky', 'faq', 'kontakt'];
+
+	// Chat state
+	const [isChatOpen, setIsChatOpen] = useState(false);
+	const [chatMessages, setChatMessages] = useState<
+		{ text: string; isUser: boolean; timestamp: Date }[]
+	>([
+		{
+			text: 'Zdravím! Jsem váš virtuální AI asistent pro digi pro firmy. Jak vám mohu pomoci s digitálním marketingem nebo automatizací vašich marketingových procesů?',
+			isUser: false,
+			timestamp: new Date(),
+		},
+	]);
+	const [chatInput, setChatInput] = useState('');
+	const [isTyping, setIsTyping] = useState(false);
+	const messagesEndRef = useRef<HTMLDivElement>(null);
 
 	return (
 		<div
@@ -668,8 +740,8 @@ export default function Home() {
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.7, delay: 0.3 }}
 						>
-							<span className='text-white'>Podpora vzdělávání</span>
-							<span className='text-white'>zaměstnanců díky</span>
+							<span className='text-white'>Digitální marketing</span>
+							<span className='text-white'>pro vaši firmu díky</span>
 							<motion.span
 								style={{
 									background: `linear-gradient(to right, ${primaryColor}, ${primaryColorBright})`,
@@ -681,7 +753,7 @@ export default function Home() {
 								animate={{ opacity: 1, scale: 1 }}
 								transition={{ duration: 0.8, delay: 0.8 }}
 							>
-								NPO DIGI PRO FIRMU
+								AI automatizaci
 							</motion.span>
 						</motion.h2>
 
@@ -692,8 +764,8 @@ export default function Home() {
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6, delay: 0.6 }}
 						>
-							Odemkněte potenciál vašeho týmu s moderními digitálními
-							dovednostmi a posuňte vaši firmu na novou úroveň.
+							Odemkněte potenciál vašeho podnikání s pokročilými AI nástroji a
+							posuňte svůj marketing na novou úroveň efektivity.
 							<motion.span
 								className='block w-20 h-1 mt-4'
 								style={{ background: primaryColor }}
@@ -740,7 +812,7 @@ export default function Home() {
 										repeatDelay: 0.5,
 									}}
 								/>
-								Startujte digitální růst
+								Nastartujte digitální růst
 								<motion.svg
 									xmlns='http://www.w3.org/2000/svg'
 									className='h-5 w-5 ml-2 inline'
@@ -782,7 +854,7 @@ export default function Home() {
 							className='text-3xl sm:text-4xl font-bold text-center mb-16 sm:mb-20 relative inline-block mx-auto'
 							style={{ color: primaryColor }}
 						>
-							Klíčové informace o iniciativě
+							Klíčové informace o digi pro firmy
 							<motion.span
 								className='absolute -bottom-2 left-0 h-[3px] bg-current'
 								initial={{ width: 0 }}
@@ -809,7 +881,7 @@ export default function Home() {
 									<InfoCard
 										icon={<ScaleIcon className='md:h-16 md:w-16' />}
 										title='Cíl projektu'
-										description='Podpořit vzdělávání malých a středních podniků (SME) a pomoci jim růst. Společně vytváříme silnější a konkurenceschopnější ekonomiku.'
+										description='Pomáháme malým a středním podnikům (SME) automatizovat jejich marketingové procesy pomocí AI nástrojů. Společně vytváříme efektivnější a konkurenceschopnější firmy na digitálním trhu.'
 										primaryColor={primaryColor}
 										primaryColorGlow={primaryColorGlow}
 										cardBg={`rgba(18, 22, 30, 0.9)`}
@@ -829,8 +901,8 @@ export default function Home() {
 							>
 								<InfoCard
 									icon={<CurrencyDollarIcon />}
-									title='Typ podpory'
-									description='Možnost čerpání příspěvků na vzdělávání pro firmy.'
+									title='Zvýšení výnosů'
+									description='Maximalizace efektivity marketingových kampaní, snížení nákladů a zvýšení konverzního poměru díky AI.'
 									primaryColor={primaryColor}
 									primaryColorGlow={primaryColorGlow}
 									cardBg={cardBackgroundColor}
@@ -858,8 +930,8 @@ export default function Home() {
 
 								<InfoCard
 									icon={<ComputerDesktopIcon />}
-									title='Zaměření vzdělávání'
-									description='Rozvoj digitálních dovedností zaměstnanců.'
+									title='Automatizace procesů'
+									description='Implementace AI nástrojů pro automatické vytváření obsahu, správu sociálních sítí a e-mail marketing.'
 									primaryColor={primaryColor}
 									primaryColorGlow={primaryColorGlow}
 									cardBg={`rgba(18, 22, 30, 0.6)`}
@@ -877,8 +949,8 @@ export default function Home() {
 							>
 								<InfoCard
 									icon={<RocketLaunchIcon />}
-									title='Přínos pro firmu'
-									description='Pomáhá firmám růst v oblasti IT a Průmyslu 4.0.'
+									title='Růst firmy'
+									description='Rozšíření digitální přítomnosti, získání nových zákazníků a zvýšení konkurenceschopnosti v online prostředí.'
 									primaryColor={primaryColor}
 									primaryColorGlow={primaryColorGlow}
 									cardBg={cardBackgroundColor}
@@ -899,8 +971,8 @@ export default function Home() {
 									icon={
 										<BriefcaseIcon className='group-hover:scale-110 transition-transform duration-300' />
 									}
-									title='Jak využít podporu'
-									description='Firmy mohou navázat individuální spolupráci s příležitostí čerpání příspěvků.'
+									title='Komplexní řešení'
+									description='Nabízíme kompletní digitální marketingovou strategii na míru vašemu podnikání s využitím nejnovějších AI technologií.'
 									primaryColor={primaryColor}
 									primaryColorGlow={primaryColorGlow}
 									cardBg={`rgba(18, 22, 30, 0.75)`}
@@ -918,8 +990,8 @@ export default function Home() {
 							>
 								<InfoCard
 									icon={<LinkIcon />}
-									title='Souvislost s projekty'
-									description='Součást širšího projektu digitálního vzdělávání z NPO, propojeno s portálem jsemvkurzu.cz.'
+									title='Datová analýza'
+									description='Využití umělé inteligence pro analýzu dat, identifikaci trendů a predikci chování zákazníků pro lepší marketingová rozhodnutí.'
 									primaryColor={primaryColor}
 									primaryColorGlow={primaryColorGlow}
 									cardBg={cardBackgroundColor}
@@ -945,13 +1017,13 @@ export default function Home() {
 							className='text-3xl sm:text-4xl font-bold text-center mb-16 sm:mb-20'
 							style={{ color: primaryColor }}
 						>
-							Proč si vybrat DIGI PRO FIRMU?
+							Proč si vybrat digi pro firmy?
 						</h3>
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10'>
 							<FeatureCard
 								icon={<LightBulbIcon />}
-								title='Inovativní přístup'
-								description='Moderní vzdělávací metody zaměřené na praktické digitální dovednosti.'
+								title='Inovativní technologie'
+								description='Využíváme nejnovější AI nástroje a technologie pro automatizaci digitálního marketingu a maximalizaci vašich výsledků.'
 								primaryColor={primaryColor}
 								primaryColorGlow={primaryColorGlow}
 								cardBg={cardBackgroundColor}
@@ -960,8 +1032,8 @@ export default function Home() {
 							/>
 							<FeatureCard
 								icon={<CpuChipIcon />}
-								title='Technologický růst'
-								description='Podpora implementace Průmyslu 4.0 a pokročilých IT řešení ve vaší firmě.'
+								title='Personalizovaný přístup'
+								description='Vytváříme strategie na míru vašemu podnikání s využitím AI, která se učí a optimalizuje podle vašich specifických potřeb a cílů.'
 								primaryColor={primaryColor}
 								primaryColorGlow={primaryColorGlow}
 								cardBg={cardBackgroundColor}
@@ -970,8 +1042,8 @@ export default function Home() {
 							/>
 							<FeatureCard
 								icon={<UserGroupIcon />}
-								title='Zkušenosti tisíců'
-								description='Osvědčený program, který již pomohl více než 20 000 firmám a jejich zaměstnancům.'
+								title='Měřitelné výsledky'
+								description='Poskytujeme detailní analýzy a reporty vašich kampaní, které jasně demonstrují návratnost vaší investice do digitálního marketingu.'
 								primaryColor={primaryColor}
 								primaryColorGlow={primaryColorGlow}
 								cardBg={cardBackgroundColor}
@@ -996,14 +1068,14 @@ export default function Home() {
 							className='text-3xl sm:text-4xl font-bold text-center mb-16 sm:mb-20'
 							style={{ color: primaryColor }}
 						>
-							Důležité termíny
+							Klíčové služby
 						</h3>
 						<div className='grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 items-stretch'>
 							<DeadlineCard
 								icon={<CalendarDaysIcon />}
-								title='Realizace vzdělávacích aktivit'
-								deadline='Nejpozději do 30. 11. 2025'
-								description='Vzdělávací aktivity musí být realizovány v tomto termínu.'
+								title='AI Obsahový marketing'
+								deadline='Výrazně rychlejší tvorba obsahu'
+								description='Generování kvalitních textů, článků, příspěvků na sociální sítě a e-mailů s využitím pokročilé umělé inteligence.'
 								primaryColor={primaryColor}
 								primaryColorGlow={primaryColorGlow}
 								cardBg={cardBackgroundColor}
@@ -1012,9 +1084,9 @@ export default function Home() {
 							/>
 							<DeadlineCard
 								icon={<DocumentArrowUpIcon />}
-								title='Podání žádosti o podporu'
-								deadline='Nejpozději do 15. 10. 2025'
-								description='Za předpokladu ukončení vzdělávací aktivity do 30. 11. 2025. Po tomto datu už nebude možné žádost podat.'
+								title='PPC kampaně a SEO'
+								deadline='Zvýšení organické i placené návštěvnosti'
+								description='Automatické optimalizace kampaní, klíčových slov a landing pages pomocí umělé inteligence pro maximální konverze.'
 								primaryColor={primaryColor}
 								primaryColorGlow={primaryColorGlow}
 								cardBg={cardBackgroundColor}
@@ -1023,9 +1095,9 @@ export default function Home() {
 							/>
 							<DeadlineCard
 								icon={<InformationCircleIcon />}
-								title='Předání podkladů k vyplacení'
-								deadline='Sjednáno dohodou'
-								description='Pro vzdělávací aktivitu ukončenou po 31. 10. 2025 musí být podklady předány nejpozději do 31. 12. 2025.'
+								title='Automatizace sociálních sítí'
+								deadline='Efektivní správa všech kanálů'
+								description='Kompletní automatizace správy vašich sociálních profilů od plánování příspěvků přes interakce s fanoušky až po analýzu výkonu.'
 								primaryColor={primaryColor}
 								primaryColorGlow={primaryColorGlow}
 								cardBg={cardBackgroundColor}
@@ -1051,202 +1123,42 @@ export default function Home() {
 							className='text-3xl sm:text-4xl font-bold text-center mb-16'
 							style={{ color: primaryColor }}
 						>
-							Přehled & Statistiky
+							Výsledky & Statistiky
 						</h3>
 
-						{/* Stats cards in a row */}
-						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+						{/* Enhanced interactive stats cards */}
+						<div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
 							{/* Card 1: Provedené Projekty */}
-							<motion.div
-								className='p-6 md:p-8 rounded-xl shadow-xl text-center backdrop-blur-md relative overflow-hidden'
-								style={{
-									backgroundColor: cardBackgroundColor,
-									border: `1px solid ${cardBorderColor}`,
-									boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-								}}
-								variants={cardVariants}
-								initial='hidden'
-								whileInView='visible'
-								viewport={{ once: true, amount: 0.3 }}
-								whileHover={{
-									y: -5,
-									boxShadow: `0 10px 30px rgba(177, 202, 102, 0.25)`,
-									transition: { duration: 0.3 },
-								}}
-							>
-								<div className='flex justify-center mb-6'>
-									<div
-										className='w-12 h-12 p-3 bg-black/30 rounded-full flex items-center justify-center relative'
-										style={{ color: primaryColor }}
-									>
-										<CheckCircleIcon className='h-6 w-6' />
-										<motion.div
-											className='absolute inset-0 rounded-full opacity-30'
-											animate={{
-												boxShadow: [
-													`0 0 0px ${primaryColorGlow}`,
-													`0 0 15px ${primaryColorGlow}`,
-													`0 0 0px ${primaryColorGlow}`,
-												],
-											}}
-											transition={{
-												duration: 2,
-												repeat: Infinity,
-												repeatType: 'mirror',
-											}}
-										/>
-									</div>
-								</div>
-
-								<motion.h4
-									className='text-3xl md:text-4xl font-bold mb-2'
-									style={{
-										color: 'white',
-										textShadow: `0 0 15px ${primaryColorGlow}`,
-									}}
-								>
-									1250+
-								</motion.h4>
-
-								<p
-									className='text-sm font-medium'
-									style={{ color: primaryColor }}
-								>
-									Provedené Projekty
-								</p>
-							</motion.div>
+							<InteractiveStatCard
+								icon={<CheckCircleIcon />}
+								value='250+'
+								label='AI kampaní spuštěno'
+								description='Úspěšně realizované a automatizované digitální marketingové kampaně pro firmy různých velikostí a oborů.'
+								primaryColor={primaryColor}
+								primaryColorGlow={primaryColorGlow}
+							/>
 
 							{/* Card 2: Spokojení Klienti */}
-							<motion.div
-								className='p-6 md:p-8 rounded-xl shadow-xl text-center backdrop-blur-md relative overflow-hidden'
-								style={{
-									backgroundColor: cardBackgroundColor,
-									border: `1px solid ${cardBorderColor}`,
-									boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-								}}
-								variants={cardVariants}
-								initial='hidden'
-								whileInView='visible'
-								viewport={{ once: true, amount: 0.3 }}
-								whileHover={{
-									y: -5,
-									boxShadow: `0 10px 30px rgba(177, 202, 102, 0.25)`,
-									transition: { duration: 0.3 },
-								}}
-							>
-								<div className='flex justify-center mb-6'>
-									<div
-										className='w-12 h-12 p-3 bg-black/30 rounded-full flex items-center justify-center relative'
-										style={{ color: primaryColor }}
-									>
-										<UserGroupIcon className='h-6 w-6' />
-										<motion.div
-											className='absolute inset-0 rounded-full opacity-30'
-											animate={{
-												boxShadow: [
-													`0 0 0px ${primaryColorGlow}`,
-													`0 0 15px ${primaryColorGlow}`,
-													`0 0 0px ${primaryColorGlow}`,
-												],
-											}}
-											transition={{
-												duration: 2,
-												repeat: Infinity,
-												repeatType: 'mirror',
-											}}
-										/>
-									</div>
-								</div>
-
-								<motion.h4
-									className='text-3xl md:text-4xl font-bold mb-2'
-									style={{
-										color: 'white',
-										textShadow: `0 0 15px ${primaryColorGlow}`,
-									}}
-								>
-									98%
-								</motion.h4>
-
-								<p
-									className='text-sm font-medium'
-									style={{ color: primaryColor }}
-								>
-									Spokojení Klienti
-								</p>
-								<p
-									className='text-xs mt-1'
-									style={{ color: textColorSecondary }}
-								>
-									Míra spokojenosti
-								</p>
-							</motion.div>
+							<InteractiveStatCard
+								icon={<UserGroupIcon />}
+								value='85%'
+								label='Průměrný nárůst konverzí'
+								description='Průměrné zvýšení konverzního poměru po implementaci našich AI marketingových řešení.'
+								primaryColor={primaryColor}
+								primaryColorGlow={primaryColorGlow}
+								delay={0.1}
+							/>
 
 							{/* Card 3: Digitální Transformace */}
-							<motion.div
-								className='p-6 md:p-8 rounded-xl shadow-xl text-center backdrop-blur-md relative overflow-hidden'
-								style={{
-									backgroundColor: cardBackgroundColor,
-									border: `1px solid ${cardBorderColor}`,
-									boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-								}}
-								variants={cardVariants}
-								initial='hidden'
-								whileInView='visible'
-								viewport={{ once: true, amount: 0.3 }}
-								whileHover={{
-									y: -5,
-									boxShadow: `0 10px 30px rgba(177, 202, 102, 0.25)`,
-									transition: { duration: 0.3 },
-								}}
-							>
-								<div className='flex justify-center mb-6'>
-									<div
-										className='w-12 h-12 p-3 bg-black/30 rounded-full flex items-center justify-center relative'
-										style={{ color: primaryColor }}
-									>
-										<CpuChipIcon className='h-6 w-6' />
-										<motion.div
-											className='absolute inset-0 rounded-full opacity-30'
-											animate={{
-												boxShadow: [
-													`0 0 0px ${primaryColorGlow}`,
-													`0 0 15px ${primaryColorGlow}`,
-													`0 0 0px ${primaryColorGlow}`,
-												],
-											}}
-											transition={{
-												duration: 2,
-												repeat: Infinity,
-												repeatType: 'mirror',
-											}}
-										/>
-									</div>
-								</div>
-
-								<motion.h4
-									className='text-3xl md:text-4xl font-bold mb-2'
-									style={{
-										color: 'white',
-										textShadow: `0 0 15px ${primaryColorGlow}`,
-									}}
-								>
-									750+
-								</motion.h4>
-
-								<p
-									className='text-sm font-medium'
-									style={{ color: primaryColor }}
-								>
-									Digitální Transformace
-								</p>
-								<p
-									className='text-xs mt-1'
-									style={{ color: textColorSecondary }}
-								>
-									Počet úspěchů transformací
-								</p>
-							</motion.div>
+							<InteractiveStatCard
+								icon={<CpuChipIcon />}
+								value='60%'
+								label='Úspora marketingových nákladů'
+								description='Průměrná úspora nákladů na marketing díky automatizaci procesů pomocí umělé inteligence.'
+								primaryColor={primaryColor}
+								primaryColorGlow={primaryColorGlow}
+								delay={0.2}
+							/>
 						</div>
 					</div>
 				</motion.section>
@@ -1262,53 +1174,92 @@ export default function Home() {
 				>
 					<div className='max-w-5xl mx-auto w-full'>
 						<h3
-							className='text-3xl sm:text-4xl font-bold text-center mb-16 sm:mb-20'
+							className='text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-8'
 							style={{ color: primaryColor }}
 						>
 							Často kladené otázky
 						</h3>
-						<div className='space-y-6'>
-							<FAQItem
-								question='Kdo může o podporu žádat?'
-								answer='Podpora je určena pro malé a střední podniky (SME) působící v České republice, které chtějí investovat do digitálního vzdělávání svých zaměstnanců.'
-								primaryColor={primaryColor}
-								primaryColorGlow={primaryColorGlow}
-								cardBg={cardBackgroundColor}
-								cardBorderColor={cardBorderColor}
-								textColorPrimary={textColorPrimary}
-								textColorSecondary={textColorSecondary}
-							/>
-							<FAQItem
-								question='Jaké typy vzdělávání jsou podporovány?'
-								answer='Podporovány jsou kurzy a školení zaměřené na rozvoj digitálních dovedností, IT specializace, Průmysl 4.0, kybernetickou bezpečnost, datovou analýzu a další relevantní oblasti.'
-								primaryColor={primaryColor}
-								primaryColorGlow={primaryColorGlow}
-								cardBg={cardBackgroundColor}
-								cardBorderColor={cardBorderColor}
-								textColorPrimary={textColorPrimary}
-								textColorSecondary={textColorSecondary}
-							/>
-							<FAQItem
-								question='Jaká je maximální výše příspěvku?'
-								answer='Výše příspěvku se odvíjí od velikosti podniku a typu vzdělávací aktivity. Detailní informace naleznete v podmínkách výzvy na oficiálním portálu.'
-								primaryColor={primaryColor}
-								primaryColorGlow={primaryColorGlow}
-								cardBg={cardBackgroundColor}
-								cardBorderColor={cardBorderColor}
-								textColorPrimary={textColorPrimary}
-								textColorSecondary={textColorSecondary}
-							/>
-							<FAQItem
-								question='Je možné kombinovat tuto podporu s jinými dotacemi?'
-								answer='Obecně platí pravidla pro kumulaci podpor. Doporučujeme konzultovat specifické případy s poskytovatelem podpory, aby se předešlo neoprávněnému čerpání.'
-								primaryColor={primaryColor}
-								primaryColorGlow={primaryColorGlow}
-								cardBg={cardBackgroundColor}
-								cardBorderColor={cardBorderColor}
-								textColorPrimary={textColorPrimary}
-								textColorSecondary={textColorSecondary}
-							/>
-						</div>
+
+						<EnhancedFAQSection
+							faqs={[
+								{
+									question: 'Co znamená "digi pro firmy"?',
+									answer:
+										'Digi pro firmy je náš koncept komplexního digitálního marketingu poháněného umělou inteligencí, který pomáhá firmám automatizovat jejich marketingové procesy, zvyšovat efektivitu a dosahovat lepších výsledků při nižších nákladech.',
+									tags: [
+										'koncept',
+										'digitální marketing',
+										'AI',
+										'automatizace',
+									],
+								},
+								{
+									question: 'Jak může umělá inteligence zlepšit náš marketing?',
+									answer:
+										'AI dokáže automatizovat rutinní úkoly, personalizovat obsah pro různé cílové skupiny, optimalizovat reklamní kampaně v reálném čase, analyzovat velké množství dat pro lepší rozhodování a predikovat trendy i chování zákazníků s nebývalou přesností.',
+									tags: [
+										'AI',
+										'umělá inteligence',
+										'automatizace',
+										'personalizace',
+										'optimalizace',
+									],
+								},
+								{
+									question: 'Pro jaké typy firem jsou vaše služby vhodné?',
+									answer:
+										'Naše řešení jsou navržena pro malé a střední podniky, které chtějí maximalizovat svůj marketingový potenciál, ale i pro větší společnosti, které hledají inovativní přístupy k digitálnímu marketingu. Přizpůsobujeme naše služby konkrétním potřebám a cílům každého klienta.',
+									tags: [
+										'cílové firmy',
+										'malé podniky',
+										'střední podniky',
+										'přizpůsobení',
+									],
+								},
+								{
+									question:
+										'Jak rychle uvidíme výsledky po implementaci vašich služeb?',
+									answer:
+										'První výsledky jsou obvykle viditelné již po 2-4 týdnech, kdy AI začne optimalizovat vaše kampaně. Plný potenciál našich řešení se však projeví po 2-3 měsících, kdy umělá inteligence nasbírá dostatek dat pro maximální efektivitu.',
+									tags: [
+										'výsledky',
+										'časový rámec',
+										'optimalizace',
+										'efektivita',
+									],
+								},
+								{
+									question:
+										'Potřebujeme mít vlastní technické oddělení pro implementaci?',
+									answer:
+										'Ne, naše řešení nevyžadují technické oddělení na vaší straně. Poskytujeme kompletní implementaci, školení a průběžnou podporu. Naším cílem je, aby bylo využívání AI v marketingu jednoduché a dostupné pro každou firmu.',
+									tags: [
+										'implementace',
+										'technické požadavky',
+										'podpora',
+										'školení',
+									],
+								},
+								{
+									question:
+										'Jak se liší vaše AI řešení od tradičních marketingových agentur?',
+									answer:
+										'Tradiční agentury často spoléhají na manuální práci a lidskou kreativitu, což je časově náročné a nákladné. Naše AI řešení automatizují rutinní úkoly, průběžně optimalizují kampaně na základě dat a dokáží pracovat 24/7 bez únavy, přičemž neustále zlepšují své výsledky díky strojovému učení.',
+									tags: [
+										'srovnání',
+										'tradiční marketing',
+										'AI výhody',
+										'automatizace',
+									],
+								},
+							]}
+							primaryColor={primaryColor}
+							primaryColorGlow={primaryColorGlow}
+							cardBg={cardBackgroundColor}
+							cardBorderColor={cardBorderColor}
+							textColorPrimary={textColorPrimary}
+							textColorSecondary={textColorSecondary}
+						/>
 					</div>
 				</motion.section>
 
@@ -1337,19 +1288,19 @@ export default function Home() {
 											textShadow: `0 0 10px ${primaryColorGlow}`,
 										}}
 									>
-										digitální transformaci?
+										AI marketingovou revoluci?
 									</span>
 								</h3>
 								<p
 									className='text-lg max-w-xl mb-8'
 									style={{ color: textColorSecondary }}
 								>
-									Vše lze vyřídit online z pohodlí kanceláře, nebo nás
-									kontaktujte s vašimi dotazy. Podejte žádost přes webovou
-									aplikaci ještě dnes!
+									Automatizujte svůj marketing, zvyšte efektivitu svých kampaní
+									a získejte náskok před konkurencí díky našemu řešení digi pro
+									firmy. Kontaktujte nás ještě dnes!
 								</p>
 								<motion.a
-									href='https://www.uradprace.cz/app/npo-digi'
+									href='#kontakt'
 									target='_blank'
 									rel='noopener noreferrer'
 									className='text-base sm:text-lg font-semibold px-8 py-4 rounded-lg inline-flex items-center mb-10'
@@ -1364,7 +1315,7 @@ export default function Home() {
 									}}
 									whileTap={{ transform: 'translateY(0)' }}
 								>
-									Podat žádost online
+									Získat AI marketingový plán
 									<ChevronRightIcon className='h-5 w-5 inline-block ml-1' />
 								</motion.a>
 
@@ -1379,8 +1330,8 @@ export default function Home() {
 										className='text-sm mb-4'
 										style={{ color: textColorSecondary }}
 									>
-										Zanechte nám zprávu a naši specialisté vás budou kontaktovat
-										s nabídkou na míru.
+										Zanechte nám zprávu a naši AI marketingoví specialisté vás
+										budou kontaktovat s nabídkou digitální strategie na míru.
 									</p>
 								</div>
 							</div>
@@ -1560,31 +1511,31 @@ export default function Home() {
 							className='text-2xl font-bold mb-2'
 							style={{ color: primaryColor }}
 						>
-							DIGI PRO FIRMU
+							DIGI PRO FIRMY
 						</h2>
 						<p>
-							Projekt &quot;Podpora vzdělávání zaměstnanců&quot; je financován z
-							Národního plánu obnovy.
+							Specializujeme se na AI řešení pro digitální marketing, která
+							posouvají vaše podnikání vpřed.
 						</p>
 					</div>
 
 					<div className='flex gap-8 items-center'>
 						<motion.a
-							href='https://jsemvkurzu.cz'
+							href='#'
 							target='_blank'
 							rel='noopener noreferrer'
 							className='flex items-center gap-2 text-sm font-medium'
 							whileHover={{ color: primaryColor }}
 						>
 							<LinkIcon className='h-4 w-4' />
-							jsemvkurzu.cz
+							Blog o AI marketingu
 						</motion.a>
 						<motion.a
 							href='#'
 							className='flex items-center gap-2 text-sm font-medium'
 							whileHover={{ color: primaryColor }}
 						>
-							<InformationCircleIcon className='h-4 w-4' />O projektu
+							<InformationCircleIcon className='h-4 w-4' />O našem přístupu
 						</motion.a>
 						<motion.a
 							href='#kontakt'
@@ -1614,6 +1565,294 @@ export default function Home() {
 				primaryColor={primaryColor}
 				primaryColorGlow={primaryColorGlow}
 			/>
+
+			{/* AI Chatbot Button */}
+			<motion.button
+				className='fixed bottom-8 right-24 z-40 h-16 w-16 rounded-full flex items-center justify-center'
+				style={{
+					backgroundColor: primaryColor,
+					boxShadow: `0 0 20px ${primaryColorGlow}`,
+				}}
+				whileHover={{
+					scale: 1.05,
+					boxShadow: `0 0 30px ${primaryColorGlow}`,
+				}}
+				whileTap={{ scale: 0.95 }}
+				onClick={() => setIsChatOpen(!isChatOpen)}
+				aria-label='Chat with AI assistant'
+			>
+				{isChatOpen ? (
+					<XMarkIcon className='h-6 w-6 text-black' />
+				) : (
+					<motion.div
+						initial={{ opacity: 1 }}
+						animate={{
+							scale: [1, 1.1, 1],
+							opacity: [1, 0.8, 1],
+						}}
+						transition={{
+							duration: 2,
+							repeat: Infinity,
+							repeatType: 'reverse',
+						}}
+					>
+						<ChatBubbleLeftRightIcon className='h-7 w-7 text-black' />
+					</motion.div>
+				)}
+			</motion.button>
+
+			{/* Chat Window */}
+			<AnimatePresence>
+				{isChatOpen && (
+					<motion.div
+						className='fixed bottom-28 right-24 w-80 sm:w-96 z-40 rounded-xl overflow-hidden flex flex-col'
+						style={{
+							backgroundColor: 'rgba(13, 17, 23, 0.85)',
+							backdropFilter: 'blur(12px)',
+							border: `1px solid rgba(255, 255, 255, 0.1)`,
+							boxShadow: `0 10px 40px rgba(0, 0, 0, 0.3), 0 0 20px ${primaryColorGlow}`,
+							height: '500px',
+							maxHeight: 'calc(100vh - 160px)',
+						}}
+						initial={{ opacity: 0, y: 20, scale: 0.95 }}
+						animate={{ opacity: 1, y: 0, scale: 1 }}
+						exit={{ opacity: 0, y: 20, scale: 0.95 }}
+						transition={{ duration: 0.2 }}
+					>
+						{/* Chat header */}
+						<div
+							className='p-4 border-b flex items-center'
+							style={{
+								borderColor: 'rgba(255, 255, 255, 0.1)',
+								background: `linear-gradient(to right, rgba(13, 17, 23, 0.9), rgba(13, 17, 23, 0.7))`,
+							}}
+						>
+							<div
+								className='h-10 w-10 rounded-full flex items-center justify-center mr-3'
+								style={{ backgroundColor: primaryColor }}
+							>
+								<ChatBubbleLeftRightIcon className='h-5 w-5 text-black' />
+							</div>
+							<div>
+								<h3 className='font-medium' style={{ color: textColorPrimary }}>
+									AI Asistent
+								</h3>
+								<p className='text-xs' style={{ color: textColorSecondary }}>
+									Online | DIGI PRO FIRMU
+								</p>
+							</div>
+						</div>
+
+						{/* Messages container */}
+						<div
+							className='flex-1 p-4 overflow-y-auto'
+							style={{ scrollBehavior: 'smooth' }}
+						>
+							{chatMessages.map((msg, index) => (
+								<motion.div
+									key={index}
+									className={`mb-4 flex ${
+										msg.isUser ? 'justify-end' : 'justify-start'
+									}`}
+									initial={{ opacity: 0, y: 10 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.2 }}
+								>
+									<div
+										className={`max-w-[80%] p-3 rounded-lg ${
+											msg.isUser ? 'rounded-tr-none' : 'rounded-tl-none'
+										}`}
+										style={{
+											backgroundColor: msg.isUser
+												? primaryColor + '80'
+												: 'rgba(30, 35, 45, 0.5)',
+											borderLeft: !msg.isUser
+												? `2px solid ${primaryColor}`
+												: 'none',
+											color: msg.isUser ? backgroundColor : textColorPrimary,
+										}}
+									>
+										<p className='text-sm whitespace-pre-wrap'>{msg.text}</p>
+										<p
+											className='text-xs mt-1 text-right'
+											style={{ opacity: 0.7 }}
+										>
+											{msg.timestamp.toLocaleTimeString([], {
+												hour: '2-digit',
+												minute: '2-digit',
+											})}
+										</p>
+									</div>
+								</motion.div>
+							))}
+
+							{/* Typing indicator */}
+							{isTyping && (
+								<motion.div
+									className='mb-4 flex justify-start'
+									initial={{ opacity: 0, y: 10 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.2 }}
+								>
+									<div
+										className='p-3 rounded-lg rounded-tl-none'
+										style={{
+											backgroundColor: 'rgba(30, 35, 45, 0.5)',
+											borderLeft: `2px solid ${primaryColor}`,
+										}}
+									>
+										<div className='flex space-x-1'>
+											<motion.div
+												className='h-2 w-2 rounded-full'
+												style={{ backgroundColor: primaryColor }}
+												animate={{ scale: [1, 1.2, 1] }}
+												transition={{ duration: 0.5, repeat: Infinity }}
+											/>
+											<motion.div
+												className='h-2 w-2 rounded-full'
+												style={{ backgroundColor: primaryColor }}
+												animate={{ scale: [1, 1.2, 1] }}
+												transition={{
+													duration: 0.5,
+													repeat: Infinity,
+													delay: 0.1,
+												}}
+											/>
+											<motion.div
+												className='h-2 w-2 rounded-full'
+												style={{ backgroundColor: primaryColor }}
+												animate={{ scale: [1, 1.2, 1] }}
+												transition={{
+													duration: 0.5,
+													repeat: Infinity,
+													delay: 0.2,
+												}}
+											/>
+										</div>
+									</div>
+								</motion.div>
+							)}
+
+							<div ref={messagesEndRef} />
+						</div>
+
+						{/* Input area */}
+						<form
+							onSubmit={(e) => {
+								e.preventDefault();
+
+								if (!chatInput.trim()) return;
+
+								// Add user message
+								const userMessage = {
+									text: chatInput,
+									isUser: true,
+									timestamp: new Date(),
+								};
+
+								setChatMessages((prev) => [...prev, userMessage]);
+								setChatInput('');
+								setIsTyping(true);
+
+								// Simulate AI response
+								setTimeout(() => {
+									// Sample responses based on keywords
+									let botResponse = '';
+									const userInput = chatInput.toLowerCase();
+
+									if (
+										userInput.includes('ai') ||
+										userInput.includes('umělá inteligence') ||
+										userInput.includes('automatizace')
+									) {
+										botResponse =
+											'Využíváme nejmodernější AI technologie pro automatizaci vašeho marketingu. Naše nástroje dokáží generovat obsah, optimalizovat kampaně, analyzovat data a předvídat chování zákazníků. Zajímá vás konkrétní oblast nasazení AI v marketingu?';
+									} else if (
+										userInput.includes('cena') ||
+										userInput.includes('náklady') ||
+										userInput.includes('investice')
+									) {
+										botResponse =
+											'Naše AI marketingová řešení jsou dostupná v několika cenových úrovních podle potřeb vaší firmy. Návratnost investice je obvykle již během prvních 2-3 měsíců díky zvýšení konverzí a snížení nákladů na kampaně. Pro konkrétní kalkulaci nás prosím kontaktujte přes formulář.';
+									} else if (
+										userInput.includes('výsledky') ||
+										userInput.includes('konverze') ||
+										userInput.includes('statistiky')
+									) {
+										botResponse =
+											'Naši klienti v průměru dosahují 85% nárůstu konverzí a 60% úspory marketingových nákladů po implementaci našich AI řešení. Poskytujeme detailní reporting a analýzy v reálném čase, abyste měli vždy přehled o výkonu vašich kampaní.';
+									} else if (
+										userInput.includes('kontakt') ||
+										userInput.includes('zavolat') ||
+										userInput.includes('email')
+									) {
+										botResponse =
+											'Můžete nás kontaktovat prostřednictvím formuláře na této stránce nebo nám zavolat na číslo +420 123 456 789. Rádi vám připravíme ukázku našich AI marketingových nástrojů a představíme možnosti pro vaši firmu.';
+									} else {
+										botResponse =
+											'Děkuji za váš dotaz. Rád vám pomohu s informacemi o našich AI marketingových řešeních, automatizaci procesů, optimalizaci kampaní nebo analýzou vašich současných výsledků. V čem konkrétně vám mohu poradit?';
+									}
+
+									const aiMessage = {
+										text: botResponse,
+										isUser: false,
+										timestamp: new Date(),
+									};
+
+									setChatMessages((prev) => [...prev, aiMessage]);
+									setIsTyping(false);
+
+									// Scroll to bottom after adding new message
+									setTimeout(() => {
+										messagesEndRef.current?.scrollIntoView({
+											behavior: 'smooth',
+										});
+									}, 100);
+								}, 1000 + Math.random() * 1000); // Random delay for more natural feel
+							}}
+							className='p-4 border-t flex gap-2'
+							style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
+						>
+							<input
+								type='text'
+								value={chatInput}
+								onChange={(e) => setChatInput(e.target.value)}
+								placeholder='Napište zprávu...'
+								className='flex-1 py-2 px-3 rounded-lg text-sm'
+								style={{
+									backgroundColor: 'rgba(0, 0, 0, 0.2)',
+									border: `1px solid rgba(255, 255, 255, 0.1)`,
+									color: textColorPrimary,
+								}}
+							/>
+							<motion.button
+								type='submit'
+								className='p-2 rounded-lg'
+								style={{
+									backgroundColor: primaryColor,
+								}}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								disabled={!chatInput.trim() || isTyping}
+							>
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									className='h-5 w-5'
+									viewBox='0 0 20 20'
+									fill='currentColor'
+									style={{ color: backgroundColor }}
+								>
+									<path
+										fillRule='evenodd'
+										d='M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z'
+										clipRule='evenodd'
+									/>
+								</svg>
+							</motion.button>
+						</form>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }
@@ -1657,20 +1896,24 @@ function InfoCard({
 	description,
 	primaryColor,
 	primaryColorGlow,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	cardBg,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	cardBorderColor,
 	textColorSecondary = '#a0aec0',
 }: InfoCardProps) {
+	// We're ignoring cardBg and cardBorderColor params in favor of custom glassmorphism styles
 	return (
 		<motion.div
-			className='p-8 md:p-10 rounded-xl h-full flex flex-col items-start text-left backdrop-blur-md relative overflow-hidden'
+			className='p-8 md:p-10 rounded-xl h-full flex flex-col items-start text-left backdrop-blur-xl relative overflow-hidden'
 			style={{
-				backgroundColor: cardBg,
+				backgroundColor: 'rgba(13, 17, 23, 0.6)',
 				borderLeft: `2px solid ${primaryColor}`,
-				borderBottom: `1px solid ${cardBorderColor}`,
-				borderRight: `1px solid ${cardBorderColor}`,
-				borderTop: `1px solid ${cardBorderColor}`,
-				boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+				borderBottom: `1px solid rgba(255, 255, 255, 0.03)`,
+				borderRight: `1px solid rgba(255, 255, 255, 0.03)`,
+				borderTop: `1px solid rgba(255, 255, 255, 0.08)`,
+				boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+				backdropFilter: 'blur(12px)',
 			}}
 			variants={cardVariants}
 			initial='hidden'
@@ -1678,11 +1921,19 @@ function InfoCard({
 			whileHover={{
 				scale: 1.03,
 				y: -5,
-				boxShadow: `0px 10px 30px rgba(177, 202, 102, 0.3)`,
+				boxShadow: `0px 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px ${primaryColorGlow}`,
 				transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
 			}}
 			viewport={{ once: true, amount: 0.2 }}
 		>
+			{/* Frosted glass highlight edge */}
+			<div
+				className='absolute top-0 left-0 right-0 h-[1px] opacity-30'
+				style={{
+					background: `linear-gradient(90deg, transparent, ${primaryColor}, transparent)`,
+				}}
+			/>
+
 			{/* Subtle geometric accent */}
 			<div
 				className='absolute top-0 right-0 w-24 h-24 opacity-5'
@@ -1693,10 +1944,11 @@ function InfoCard({
 			/>
 
 			<div
-				className='p-4 bg-black/20 rounded-lg mb-6 relative group'
+				className='p-4 bg-black/30 rounded-lg mb-6 relative group'
 				style={{
 					color: primaryColor,
 					boxShadow: `0 0 20px ${primaryColorGlow}`,
+					backdropFilter: 'blur(8px)',
 					transition: 'all 0.3s ease',
 				}}
 			>
@@ -2020,6 +2272,234 @@ function FAQItem({
 				>
 					{answer}
 				</motion.p>
+			</motion.div>
+		</motion.div>
+	);
+}
+
+// Enhanced FAQ Section with search functionality
+interface FAQItem {
+	question: string;
+	answer: string;
+	tags: string[];
+}
+
+interface EnhancedFAQSectionProps {
+	faqs: FAQItem[];
+	primaryColor: string;
+	primaryColorGlow: string;
+	cardBg: string;
+	cardBorderColor: string;
+	textColorPrimary: string;
+	textColorSecondary: string;
+}
+
+function EnhancedFAQSection({
+	faqs,
+	primaryColor,
+	primaryColorGlow,
+	cardBg,
+	cardBorderColor,
+	textColorPrimary,
+	textColorSecondary,
+}: EnhancedFAQSectionProps) {
+	return (
+		<div className='space-y-6'>
+			{/* FAQ items */}
+			<AnimatePresence>
+				{faqs.map((faq, index) => (
+					<motion.div
+						key={index}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.3, delay: index * 0.05 }}
+					>
+						<FAQItem
+							question={faq.question}
+							answer={faq.answer}
+							primaryColor={primaryColor}
+							primaryColorGlow={primaryColorGlow}
+							cardBg={cardBg}
+							cardBorderColor={cardBorderColor}
+							textColorPrimary={textColorPrimary}
+							textColorSecondary={textColorSecondary}
+						/>
+					</motion.div>
+				))}
+			</AnimatePresence>
+		</div>
+	);
+}
+
+// Interactive Stat Card Component
+interface InteractiveStatCardProps {
+	icon: React.ReactElement;
+	value: string;
+	label: string;
+	description: string;
+	primaryColor: string;
+	primaryColorGlow: string;
+	delay?: number;
+}
+
+function InteractiveStatCard({
+	icon,
+	value,
+	label,
+	description,
+	primaryColor,
+	primaryColorGlow,
+	delay = 0,
+}: InteractiveStatCardProps) {
+	const [isHovered, setIsHovered] = useState(false);
+
+	return (
+		<motion.div
+			className='relative overflow-hidden h-full'
+			initial={{ opacity: 0, y: 30 }}
+			whileInView={{ opacity: 1, y: 0 }}
+			viewport={{ once: true, amount: 0.3 }}
+			transition={{ duration: 0.5, delay }}
+		>
+			<motion.div
+				className='p-8 rounded-xl backdrop-blur-xl h-full flex flex-col'
+				style={{
+					backgroundColor: 'rgba(13, 17, 23, 0.6)',
+					borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+					borderLeft: '1px solid rgba(255, 255, 255, 0.025)',
+					borderRight: '1px solid rgba(10, 10, 10, 0.1)',
+					borderBottom: '1px solid rgba(10, 10, 10, 0.1)',
+					boxShadow: isHovered
+						? `0 20px 40px rgba(0, 0, 0, 0.3), 0 0 25px ${primaryColorGlow}`
+						: '0 10px 30px rgba(0, 0, 0, 0.15)',
+					transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
+					transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+				}}
+				onHoverStart={() => setIsHovered(true)}
+				onHoverEnd={() => setIsHovered(false)}
+			>
+				{/* Top light bar */}
+				<motion.div
+					className='absolute top-0 left-0 w-full h-[2px]'
+					style={{
+						background: `linear-gradient(to right, transparent, ${primaryColor}, transparent)`,
+						opacity: isHovered ? 0.8 : 0.3,
+					}}
+					animate={{
+						opacity: isHovered ? [0.3, 0.8, 0.3] : 0.3,
+					}}
+					transition={{
+						duration: 2,
+						repeat: isHovered ? Infinity : 0,
+						repeatType: 'reverse',
+					}}
+				/>
+
+				{/* Icon with animated backdrop */}
+				<div className='relative mb-6 group'>
+					<div
+						className='w-16 h-16 p-4 rounded-lg flex items-center justify-center relative group-hover:scale-[1.03] transition-transform duration-300'
+						style={{
+							background: 'rgba(0, 0, 0, 0.3)',
+							color: primaryColor,
+						}}
+					>
+						<div className='h-8 w-8 relative z-10'>{icon}</div>
+
+						<motion.div
+							className='absolute inset-0 rounded-lg opacity-20'
+							animate={{
+								boxShadow: isHovered
+									? [
+											`0 0 0px ${primaryColor}`,
+											`0 0 20px ${primaryColor}`,
+											`0 0 0px ${primaryColor}`,
+									  ]
+									: `0 0 0px ${primaryColor}`,
+							}}
+							transition={{
+								duration: 2,
+								repeat: isHovered ? Infinity : 0,
+								repeatType: 'reverse',
+							}}
+						/>
+					</div>
+
+					{/* Subtle pulse effect */}
+					<motion.div
+						className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full'
+						style={{
+							background: `radial-gradient(circle, ${primaryColor}30 0%, transparent 70%)`,
+						}}
+						animate={{
+							width: isHovered ? ['100%', '140%', '100%'] : '100%',
+							height: isHovered ? ['100%', '140%', '100%'] : '100%',
+							opacity: isHovered ? [0.3, 0.6, 0.3] : 0.3,
+						}}
+						transition={{
+							duration: 3,
+							repeat: isHovered ? Infinity : 0,
+							repeatType: 'reverse',
+						}}
+					/>
+				</div>
+
+				{/* Value and label */}
+				<div className='flex flex-col mb-4'>
+					<motion.h4
+						className='text-3xl md:text-4xl font-bold mb-1'
+						style={{
+							color: isHovered ? primaryColor : 'white',
+							textShadow: isHovered ? `0 0 15px ${primaryColorGlow}` : 'none',
+						}}
+						animate={{
+							textShadow: isHovered
+								? [
+										`0 0 10px ${primaryColorGlow}`,
+										`0 0 20px ${primaryColorGlow}`,
+										`0 0 10px ${primaryColorGlow}`,
+								  ]
+								: `0 0 0px transparent`,
+						}}
+						transition={{
+							duration: 2,
+							repeat: isHovered ? Infinity : 0,
+							repeatType: 'reverse',
+						}}
+					>
+						{value}
+					</motion.h4>
+
+					<h5 className='text-lg font-medium' style={{ color: primaryColor }}>
+						{label}
+					</h5>
+				</div>
+
+				{/* Description - only visible on hover */}
+				<motion.p
+					className='text-sm mt-auto'
+					style={{
+						color: 'rgba(255, 255, 255, 0.7)',
+						lineHeight: 1.6,
+					}}
+					animate={{
+						opacity: isHovered ? 1 : 0,
+						height: isHovered ? 'auto' : '0',
+					}}
+					transition={{ duration: 0.3 }}
+				>
+					{description}
+				</motion.p>
+
+				{/* View more link - only visible on hover */}
+				<motion.div
+					className='absolute bottom-6 right-6'
+					animate={{
+						opacity: isHovered ? 1 : 0,
+						scale: isHovered ? 1 : 0.8,
+					}}
+					transition={{ duration: 0.2 }}
+				></motion.div>
 			</motion.div>
 		</motion.div>
 	);
