@@ -33,36 +33,32 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Animation variants
 const sectionVariants = {
-	hidden: { opacity: 0, y: 50 },
-	visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+	hidden: { opacity: 0, y: 20 },
+	visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
 };
 
 // Updated card variants with more dramatic effects
 const cardVariants = {
-	hidden: { opacity: 0, scale: 0.95, y: 20 },
+	hidden: { opacity: 0, y: 10 },
 	visible: {
 		opacity: 1,
-		scale: 1,
 		y: 0,
-		transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+		transition: { duration: 0.3, ease: 'easeOut' },
 	},
 	hover: {
-		scale: 1.03,
-		y: -5,
-		boxShadow: '0px 10px 30px rgba(177, 202, 102, 0.2)',
-		z: 10,
-		transition: { duration: 0.3 },
+		scale: 1.02,
+		y: -2,
+		transition: { duration: 0.2 },
 	},
 };
 
 // Updated button variants
 const buttonVariants = {
 	hover: {
-		scale: 1.05,
-		boxShadow: '0px 6px 25px rgba(177, 202, 102, 0.25)',
+		scale: 1.02,
 		transition: { duration: 0.2 },
 	},
-	tap: { scale: 0.97 },
+	tap: { scale: 0.98 },
 };
 
 // Background Parallax Component
@@ -74,119 +70,49 @@ function ParallaxBackground({
 	primaryColor: string;
 }) {
 	const { scrollYProgress } = useScroll();
-
-	// More dramatic, asymmetric movements
-	const y1 = useTransform(scrollYProgress, [0, 1], ['0%', '-20%']);
-	const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '-30%']);
-	const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '-15%']);
-	const y4 = useTransform(scrollYProgress, [0, 1], ['0%', '-10%']);
-
-	// More visible but still subtle opacities
-	const opacity1 = useTransform(
-		scrollYProgress,
-		[0, 0.5, 1],
-		[0.15, 0.2, 0.08]
-	);
-	const opacity2 = useTransform(
-		scrollYProgress,
-		[0, 0.5, 1],
-		[0.12, 0.15, 0.06]
-	);
-	const opacity3 = useTransform(
-		scrollYProgress,
-		[0, 0.5, 1],
-		[0.08, 0.12, 0.04]
-	);
-	const opacity4 = useTransform(
-		scrollYProgress,
-		[0, 0.5, 1],
-		[0.06, 0.1, 0.03]
-	);
-
-	// Adjust base opacity based on theme
-	const opacityMultiplier = isDarkTheme ? 1 : 0.6;
+	const y1 = useTransform(scrollYProgress, [0, 1], ['0%', '-15%']);
+	const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '-20%']);
 
 	return (
 		<div className='fixed inset-0 z-[-10] overflow-hidden'>
-			{/* Main glow in top-left with enhanced radial gradient */}
 			<motion.div
 				className='absolute top-[-30vh] left-[-20vw] w-[150vw] h-[150vh]'
 				style={{
 					background: `radial-gradient(circle at 30% 30%, ${primaryColor}${
-						isDarkTheme ? '18' : '12'
+						isDarkTheme ? '15' : '10'
 					} 0%, ${primaryColor}${
-						isDarkTheme ? '0A' : '05'
+						isDarkTheme ? '08' : '05'
 					} 45%, transparent 70%)`,
-					filter: 'blur(120px)',
+					filter: 'blur(80px)',
 					y: y1,
-					opacity: opacity1.get() * opacityMultiplier,
+					opacity: 0.15,
+					willChange: 'transform',
+					transform: 'translateZ(0)',
 				}}
 			></motion.div>
 
-			{/* Secondary deep blue/purple glow bottom-right with mesh gradient */}
 			<motion.div
 				className='absolute bottom-[-80vh] right-[-50vw] w-[200vw] h-[200vh]'
 				style={{
 					background: isDarkTheme
-						? `radial-gradient(circle at 70% 70%, rgba(35, 40, 70, 0.15) 0%, rgba(20, 25, 55, 0.1) 40%, transparent 70%)`
-						: `radial-gradient(circle at 70% 70%, rgba(90, 100, 130, 0.1) 0%, rgba(80, 90, 120, 0.07) 40%, transparent 70%)`,
-					filter: 'blur(150px)',
+						? `radial-gradient(circle at 70% 70%, rgba(35, 40, 70, 0.12) 0%, rgba(20, 25, 55, 0.08) 40%, transparent 70%)`
+						: `radial-gradient(circle at 70% 70%, rgba(90, 100, 130, 0.08) 0%, rgba(80, 90, 120, 0.05) 40%, transparent 70%)`,
+					filter: 'blur(100px)',
 					y: y2,
-					opacity: opacity2.get() * opacityMultiplier,
+					opacity: 0.1,
+					willChange: 'transform',
+					transform: 'translateZ(0)',
 				}}
 			></motion.div>
 
-			{/* Green accent middle-right with better mesh effect */}
-			<motion.div
-				className='absolute top-[30vh] right-[-30vw] w-[120vw] h-[120vh]'
-				style={{
-					background: `radial-gradient(ellipse at 70% 50%, ${primaryColor}${
-						isDarkTheme ? '12' : '0A'
-					} 0%, ${primaryColor}${
-						isDarkTheme ? '08' : '05'
-					} 35%, transparent 65%)`,
-					filter: 'blur(140px)',
-					y: y3,
-					opacity: opacity3.get() * opacityMultiplier,
-				}}
-			></motion.div>
-
-			{/* Dark/light gradient for contrast middle-left with more depth */}
-			<motion.div
-				className='absolute top-[60vh] left-[10vw] w-[100vw] h-[100vh]'
-				style={{
-					background: isDarkTheme
-						? `radial-gradient(circle at 30% 50%, rgba(15, 20, 35, 0.25) 0%, rgba(10, 15, 25, 0.15) 30%, transparent 60%)`
-						: `radial-gradient(circle at 30% 50%, rgba(245, 247, 250, 0.7) 0%, rgba(240, 242, 245, 0.4) 30%, transparent 60%)`,
-					filter: 'blur(130px)',
-					y: y4,
-					opacity: opacity4.get() * opacityMultiplier,
-				}}
-			></motion.div>
-
-			{/* New soft noise texture overlay for added depth */}
 			<div
-				className='absolute inset-0 opacity-[0.03] mix-blend-soft-light pointer-events-none'
+				className='absolute inset-0 opacity-[0.02] mix-blend-soft-light pointer-events-none'
 				style={{
 					backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
 					backgroundSize: '200px 200px',
+					willChange: 'opacity',
 				}}
 			/>
-
-			{/* Enhanced grid overlay for tech feel */}
-			<div
-				className='absolute inset-0'
-				style={{
-					opacity: isDarkTheme ? 0.025 : 0.015,
-					backgroundImage: `
-						linear-gradient(${primaryColor} 1px, transparent 1px),
-						linear-gradient(90deg, ${primaryColor} 1px, transparent 1px),
-						linear-gradient(rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
-						linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px)
-					`,
-					backgroundSize: '100px 100px, 100px 100px, 20px 20px, 20px 20px',
-				}}
-			></div>
 		</div>
 	);
 }
@@ -378,12 +304,16 @@ export default function Home() {
 			style={{
 				backgroundColor,
 				color: textColorPrimary,
+				willChange: 'transform',
+				transform: 'translateZ(0)',
 			}}
 		>
 			<style jsx global>{`
 				html,
 				body {
 					scroll-behavior: smooth;
+					-webkit-font-smoothing: antialiased;
+					-moz-osx-font-smoothing: grayscale;
 				}
 				body {
 					background-color: ${backgroundColor};
@@ -406,12 +336,12 @@ export default function Home() {
 					transition: all 0.2s ease-in-out;
 					outline: none;
 					appearance: none;
+					will-change: transform;
 				}
 
 				.form-input:focus {
 					border-color: ${primaryColor};
-					box-shadow: 0 0 0 2px rgba(177, 202, 102, 0.15),
-						0 0 15px rgba(177, 202, 102, 0.15);
+					box-shadow: 0 0 0 2px rgba(177, 202, 102, 0.15);
 					background-color: rgba(30, 35, 48, 0.7);
 				}
 
@@ -419,10 +349,10 @@ export default function Home() {
 					color: rgba(255, 255, 255, 0.4);
 				}
 
-				/* Custom scrollbar */
+				/* Optimize scrollbar */
 				::-webkit-scrollbar {
-					width: 10px;
-					height: 10px;
+					width: 8px;
+					height: 8px;
 				}
 
 				::-webkit-scrollbar-track {
@@ -431,28 +361,26 @@ export default function Home() {
 
 				::-webkit-scrollbar-thumb {
 					background: rgba(177, 202, 102, 0.2);
-					border-radius: 5px;
+					border-radius: 4px;
 				}
 
 				::-webkit-scrollbar-thumb:hover {
-					background: rgba(177, 202, 102, 0.4);
+					background: rgba(177, 202, 102, 0.3);
 				}
 
-				/* Improve CTA buttons and interactions */
-				a,
-				button {
-					transition: all 0.2s ease-out;
+				/* Optimize animations */
+				* {
+					backface-visibility: hidden;
+					-webkit-backface-visibility: hidden;
 				}
 
-				@keyframes pulse {
-					0% {
-						box-shadow: 0 0 0 0 rgba(177, 202, 102, 0.4);
-					}
-					70% {
-						box-shadow: 0 0 0 10px rgba(177, 202, 102, 0);
-					}
-					100% {
-						box-shadow: 0 0 0 0 rgba(177, 202, 102, 0);
+				/* Reduce animation complexity */
+				@media (prefers-reduced-motion: reduce) {
+					* {
+						animation-duration: 0.01ms !important;
+						animation-iteration-count: 1 !important;
+						transition-duration: 0.01ms !important;
+						scroll-behavior: auto !important;
 					}
 				}
 			`}</style>
@@ -1896,13 +1824,8 @@ function InfoCard({
 	description,
 	primaryColor,
 	primaryColorGlow,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	cardBg,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	cardBorderColor,
 	textColorSecondary = '#a0aec0',
 }: InfoCardProps) {
-	// We're ignoring cardBg and cardBorderColor params in favor of custom glassmorphism styles
 	return (
 		<motion.div
 			className='p-8 md:p-10 rounded-xl h-full flex flex-col items-start text-left backdrop-blur-xl relative overflow-hidden'
@@ -1914,79 +1837,44 @@ function InfoCard({
 				borderTop: `1px solid rgba(255, 255, 255, 0.08)`,
 				boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
 				backdropFilter: 'blur(12px)',
+				willChange: 'transform',
+				transform: 'translateZ(0)',
 			}}
 			variants={cardVariants}
 			initial='hidden'
 			whileInView='visible'
-			whileHover={{
-				scale: 1.03,
-				y: -5,
-				boxShadow: `0px 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px ${primaryColorGlow}`,
-				transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
-			}}
+			whileHover='hover'
 			viewport={{ once: true, amount: 0.2 }}
 		>
-			{/* Frosted glass highlight edge */}
 			<div
-				className='absolute top-0 left-0 right-0 h-[1px] opacity-30'
-				style={{
-					background: `linear-gradient(90deg, transparent, ${primaryColor}, transparent)`,
-				}}
-			/>
-
-			{/* Subtle geometric accent */}
-			<div
-				className='absolute top-0 right-0 w-24 h-24 opacity-5'
-				style={{
-					clipPath: 'polygon(100% 0, 0 0, 100% 100%)',
-					background: `linear-gradient(135deg, ${primaryColor} 0%, transparent 60%)`,
-				}}
-			/>
-
-			<div
-				className='p-4 bg-black/30 rounded-lg mb-6 relative group'
+				className='p-4 bg-black/30 rounded-lg mb-6 relative'
 				style={{
 					color: primaryColor,
 					boxShadow: `0 0 20px ${primaryColorGlow}`,
 					backdropFilter: 'blur(8px)',
-					transition: 'all 0.3s ease',
 				}}
 			>
 				{React.cloneElement(icon, {
 					...icon.props,
 					className: `h-10 w-10 sm:h-12 sm:w-12 ${
 						icon.props.className || ''
-					} transition-all duration-300 group-hover:scale-110`.trim(),
+					}`.trim(),
 				})}
-				<div
-					className='absolute inset-0 rounded-lg opacity-20'
-					style={{
-						background: `radial-gradient(circle at center, ${primaryColor}22 0%, transparent 70%)`,
-					}}
-				/>
 			</div>
 			<h4
-				className='text-xl sm:text-2xl font-bold mb-3 relative'
+				className='text-xl sm:text-2xl font-bold mb-3'
 				style={{
 					color: primaryColor,
 					textShadow: `0 0 8px ${primaryColorGlow}`,
-					letterSpacing: '0.01em',
 				}}
 			>
 				{title}
-				<motion.span
-					className='absolute -bottom-1 left-0 h-[2px] w-8 opacity-60'
-					style={{ background: primaryColor }}
-					whileHover={{ width: '100%', opacity: 0.8 }}
-					transition={{ duration: 0.3 }}
-				/>
 			</h4>
 			<p
 				className='text-sm sm:text-base leading-relaxed'
 				style={{
 					color: textColorSecondary,
 					lineHeight: 1.7,
-					letterSpacing: '0.015em',
 				}}
 			>
 				{description}
@@ -2356,10 +2244,10 @@ function InteractiveStatCard({
 	return (
 		<motion.div
 			className='relative overflow-hidden h-full'
-			initial={{ opacity: 0, y: 30 }}
+			initial={{ opacity: 0, y: 20 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			viewport={{ once: true, amount: 0.3 }}
-			transition={{ duration: 0.5, delay }}
+			transition={{ duration: 0.4, delay }}
 		>
 			<motion.div
 				className='p-8 rounded-xl backdrop-blur-xl h-full flex flex-col'
@@ -2370,136 +2258,56 @@ function InteractiveStatCard({
 					borderRight: '1px solid rgba(10, 10, 10, 0.1)',
 					borderBottom: '1px solid rgba(10, 10, 10, 0.1)',
 					boxShadow: isHovered
-						? `0 20px 40px rgba(0, 0, 0, 0.3), 0 0 25px ${primaryColorGlow}`
-						: '0 10px 30px rgba(0, 0, 0, 0.15)',
-					transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
-					transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+						? `0 15px 30px rgba(0, 0, 0, 0.2), 0 0 15px ${primaryColorGlow}`
+						: '0 10px 20px rgba(0, 0, 0, 0.15)',
+					transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+					transition: 'all 0.3s ease',
+					willChange: 'transform',
 				}}
 				onHoverStart={() => setIsHovered(true)}
 				onHoverEnd={() => setIsHovered(false)}
 			>
-				{/* Top light bar */}
-				<motion.div
-					className='absolute top-0 left-0 w-full h-[2px]'
-					style={{
-						background: `linear-gradient(to right, transparent, ${primaryColor}, transparent)`,
-						opacity: isHovered ? 0.8 : 0.3,
-					}}
-					animate={{
-						opacity: isHovered ? [0.3, 0.8, 0.3] : 0.3,
-					}}
-					transition={{
-						duration: 2,
-						repeat: isHovered ? Infinity : 0,
-						repeatType: 'reverse',
-					}}
-				/>
-
-				{/* Icon with animated backdrop */}
-				<div className='relative mb-6 group'>
+				<div className='relative mb-6'>
 					<div
-						className='w-16 h-16 p-4 rounded-lg flex items-center justify-center relative group-hover:scale-[1.03] transition-transform duration-300'
+						className='w-16 h-16 p-4 rounded-lg flex items-center justify-center'
 						style={{
 							background: 'rgba(0, 0, 0, 0.3)',
 							color: primaryColor,
 						}}
 					>
-						<div className='h-8 w-8 relative z-10'>{icon}</div>
-
-						<motion.div
-							className='absolute inset-0 rounded-lg opacity-20'
-							animate={{
-								boxShadow: isHovered
-									? [
-											`0 0 0px ${primaryColor}`,
-											`0 0 20px ${primaryColor}`,
-											`0 0 0px ${primaryColor}`,
-									  ]
-									: `0 0 0px ${primaryColor}`,
-							}}
-							transition={{
-								duration: 2,
-								repeat: isHovered ? Infinity : 0,
-								repeatType: 'reverse',
-							}}
-						/>
+						<div className='h-8 w-8'>{icon}</div>
 					</div>
-
-					{/* Subtle pulse effect */}
-					<motion.div
-						className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full'
-						style={{
-							background: `radial-gradient(circle, ${primaryColor}30 0%, transparent 70%)`,
-						}}
-						animate={{
-							width: isHovered ? ['100%', '140%', '100%'] : '100%',
-							height: isHovered ? ['100%', '140%', '100%'] : '100%',
-							opacity: isHovered ? [0.3, 0.6, 0.3] : 0.3,
-						}}
-						transition={{
-							duration: 3,
-							repeat: isHovered ? Infinity : 0,
-							repeatType: 'reverse',
-						}}
-					/>
 				</div>
 
-				{/* Value and label */}
 				<div className='flex flex-col mb-4'>
-					<motion.h4
+					<h4
 						className='text-3xl md:text-4xl font-bold mb-1'
 						style={{
 							color: isHovered ? primaryColor : 'white',
-							textShadow: isHovered ? `0 0 15px ${primaryColorGlow}` : 'none',
-						}}
-						animate={{
-							textShadow: isHovered
-								? [
-										`0 0 10px ${primaryColorGlow}`,
-										`0 0 20px ${primaryColorGlow}`,
-										`0 0 10px ${primaryColorGlow}`,
-								  ]
-								: `0 0 0px transparent`,
-						}}
-						transition={{
-							duration: 2,
-							repeat: isHovered ? Infinity : 0,
-							repeatType: 'reverse',
+							textShadow: isHovered ? `0 0 10px ${primaryColorGlow}` : 'none',
+							transition: 'all 0.3s ease',
 						}}
 					>
 						{value}
-					</motion.h4>
+					</h4>
 
 					<h5 className='text-lg font-medium' style={{ color: primaryColor }}>
 						{label}
 					</h5>
 				</div>
 
-				{/* Description - only visible on hover */}
-				<motion.p
+				<p
 					className='text-sm mt-auto'
 					style={{
 						color: 'rgba(255, 255, 255, 0.7)',
 						lineHeight: 1.6,
-					}}
-					animate={{
 						opacity: isHovered ? 1 : 0,
 						height: isHovered ? 'auto' : '0',
+						transition: 'all 0.3s ease',
 					}}
-					transition={{ duration: 0.3 }}
 				>
 					{description}
-				</motion.p>
-
-				{/* View more link - only visible on hover */}
-				<motion.div
-					className='absolute bottom-6 right-6'
-					animate={{
-						opacity: isHovered ? 1 : 0,
-						scale: isHovered ? 1 : 0.8,
-					}}
-					transition={{ duration: 0.2 }}
-				></motion.div>
+				</p>
 			</motion.div>
 		</motion.div>
 	);
